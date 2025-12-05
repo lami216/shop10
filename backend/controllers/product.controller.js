@@ -1,9 +1,43 @@
 import mongoose from "mongoose";
 import { redis } from "../lib/redis.js";
-import cloudinary from "../lib/cloudinary.js";
+import { deleteImage, uploadImage } from "../lib/imagekit.js";
 import Product from "../models/product.model.js";
 
 const MAX_PRODUCT_IMAGES = 3;
+
+const normalizeImageEntry = (image) => {
+        if (!image) return null;
+
+        if (typeof image === "string") {
+                const trimmed = image.trim();
+                return trimmed ? { url: trimmed, fileId: null } : null;
+        }
+
+        if (typeof image === "object") {
+                const url = typeof image.url === "string" ? image.url : null;
+                const fileId =
+                        typeof image.fileId === "string"
+                                ? image.fileId
+                                : typeof image.public_id === "string"
+                                  ? image.public_id
+                                  : null;
+
+                if (url) {
+                        return { url, fileId: fileId || null };
+                }
+        }
+
+        return null;
+};
+
+const normalizeImages = (images) => {
+        if (!Array.isArray(images)) return [];
+
+        return images
+                .map(normalizeImageEntry)
+                .filter(Boolean)
+                .slice(0, MAX_PRODUCT_IMAGES);
+};
 
 const createHttpError = (status, message) => {
         const error = new Error(message);
@@ -59,6 +93,8 @@ const normalizeDiscountSettings = ({
 const finalizeProductPayload = (product) => {
         if (!product) return product;
 
+        const normalizedImages = normalizeImages(product.images);
+        const coverImage = product.image || normalizedImages[0]?.url || "";
         const price = Number(product.price) || 0;
         const percentage = Number(product.discountPercentage) || 0;
         const isDiscounted = Boolean(product.isDiscounted) && percentage > 0;
@@ -69,6 +105,8 @@ const finalizeProductPayload = (product) => {
 
         return {
                 ...product,
+                image: coverImage,
+                images: normalizedImages,
                 isDiscounted,
                 discountPercentage: effectivePercentage,
                 discountedPrice,
@@ -139,27 +177,20 @@ const cleanupUploadedImages = async (images) => {
         if (!images.length) {
                 return;
         }
-        const uploadedPublicIds = images.map((image) => image.public_id).filter(Boolean);
-        if (!uploadedPublicIds.length) {
-                return;
-        }
-        try {
-                        await cloudinary.api.delete_resources(uploadedPublicIds);
-        } catch (cleanupError) {
-                console.log("Error cleaning up uploaded images after failure", cleanupError);
-        }
+
+        const uploadedFileIds = images.map((image) => image.fileId).filter(Boolean);
+
+        await Promise.all(uploadedFileIds.map((fileId) => deleteImage(fileId).catch(() => {})));
 };
 
 const uploadProductImages = async (images) => {
         const uploadedImages = [];
         try {
                 for (const base64Image of images) {
-                        const uploadResult = await cloudinary.uploader.upload(base64Image, {
-                                folder: "products",
-                        });
+                        const uploadResult = await uploadImage(base64Image, "products");
                         uploadedImages.push({
-                                url: uploadResult.secure_url,
-                                public_id: uploadResult.public_id,
+                                url: uploadResult.url,
+                                fileId: uploadResult.fileId,
                         });
                 }
                 return uploadedImages;
@@ -187,11 +218,13 @@ const collectExistingImageIds = (images) => {
         return images
                 .map((image) => {
                         if (typeof image === "string") {
-                                return image;
+                                return image.trim();
                         }
 
-                        if (typeof image?.public_id === "string") {
-                                return image.public_id;
+                        if (typeof image === "object" && image !== null) {
+                                if (typeof image.fileId === "string") return image.fileId;
+                                if (typeof image.public_id === "string") return image.public_id;
+                                if (typeof image.url === "string") return image.url;
                         }
 
                         return null;
@@ -207,10 +240,10 @@ const sanitizeNewImagesInput = (images) => {
 };
 
 const splitCurrentImages = (currentImages, retainedIds) => {
-        const images = Array.isArray(currentImages) ? currentImages : [];
+        const images = normalizeImages(currentImages);
         return {
-                retainedImages: images.filter((image) => retainedIds.includes(image.public_id)),
-                removedImages: images.filter((image) => !retainedIds.includes(image.public_id)),
+                retainedImages: images.filter((image) => retainedIds.includes(image.fileId || image.url)),
+                removedImages: images.filter((image) => !retainedIds.includes(image.fileId || image.url)),
         };
 };
 
@@ -224,19 +257,13 @@ const ensureImageCountsForUpdate = (retainedImages, newImages) => {
         }
 };
 
-const deleteImagesFromCloudinary = async (images) => {
-        const publicIdsToDelete = images.map((image) => image.public_id).filter(Boolean);
-        if (!publicIdsToDelete.length) {
+const deleteImagesFromStorage = async (images) => {
+        const fileIdsToDelete = images.map((image) => image.fileId).filter(Boolean);
+        if (!fileIdsToDelete.length) {
                 return;
         }
-        try {
-                await cloudinary.api.delete_resources(publicIdsToDelete, {
-                        type: "upload",
-                        resource_type: "image",
-                });
-        } catch (cloudinaryError) {
-                console.log("Error deleting removed images from Cloudinary", cloudinaryError);
-        }
+
+        await Promise.all(fileIdsToDelete.map((fileId) => deleteImage(fileId).catch(() => {})));
 };
 
 const uploadNewProductImages = async (newImages) => {
@@ -246,12 +273,10 @@ const uploadNewProductImages = async (newImages) => {
         const uploadedImages = [];
         try {
                 for (const base64Image of newImages) {
-                        const uploadResult = await cloudinary.uploader.upload(base64Image, {
-                                folder: "products",
-                        });
+                        const uploadResult = await uploadImage(base64Image, "products");
                         uploadedImages.push({
-                                url: uploadResult.secure_url,
-                                public_id: uploadResult.public_id,
+                                url: uploadResult.url,
+                                fileId: uploadResult.fileId,
                         });
                 }
                 return uploadedImages;
@@ -263,7 +288,10 @@ const uploadNewProductImages = async (newImages) => {
 
 const orderRetainedImages = (existingImageIds, retainedImages) => {
         const lookup = retainedImages.reduce((accumulator, image) => {
-                accumulator[image.public_id] = image;
+                const key = image.fileId || image.url;
+                if (key) {
+                        accumulator[key] = image;
+                }
                 return accumulator;
         }, {});
         return existingImageIds.map((publicId) => lookup[publicId]).filter(Boolean);
@@ -416,7 +444,7 @@ export const createProduct = async (req, res) => {
                         name: trimmedName,
                         description: trimmedDescription,
                         price: numericPrice,
-                        image: uploadedImages[0]?.url,
+                        image: uploadedImages[0]?.url || "",
                         images: uploadedImages,
                         ...categoryAssignments,
                         isDiscounted: discountSettings.isDiscounted,
@@ -463,13 +491,13 @@ export const updateProduct = async (req, res) => {
                 );
                 const existingImageIds = collectExistingImageIds(existingImages);
                 const sanitizedNewImages = sanitizeNewImagesInput(newImages);
+                const normalizedCurrentImages = normalizeImages(product.images);
                 const { retainedImages, removedImages } = splitCurrentImages(
-                        product.images,
+                        normalizedCurrentImages,
                         existingImageIds
                 );
 
                 ensureImageCountsForUpdate(retainedImages, sanitizedNewImages);
-                await deleteImagesFromCloudinary(removedImages);
                 const uploadedImages = await uploadNewProductImages(sanitizedNewImages);
                 const finalImages = arrangeFinalImages(
                         existingImageIds,
@@ -477,6 +505,7 @@ export const updateProduct = async (req, res) => {
                         uploadedImages,
                         cover
                 );
+                await deleteImagesFromStorage(removedImages);
                 const numericPrice = ensureValidPriceValue(
                         price === undefined || price === null ? product.price : price
                 );
@@ -498,8 +527,9 @@ export const updateProduct = async (req, res) => {
                 product.category = categoryAssignments.category;
                 product.categorySlug = categoryAssignments.categorySlug;
                 product.categoryId = categoryAssignments.categoryId || null;
-                product.images = finalImages.length ? finalImages : product.images;
-                product.image = finalImages[0]?.url || product.image;
+                const imagesToPersist = finalImages.length ? finalImages : normalizedCurrentImages;
+                product.images = imagesToPersist;
+                product.image = imagesToPersist[0]?.url || product.image;
                 product.isDiscounted = discountSettings.isDiscounted;
                 product.discountPercentage = discountSettings.discountPercentage;
 
@@ -527,22 +557,9 @@ export const deleteProduct = async (req, res) => {
                         return res.status(404).json({ message: "Product not found" });
                 }
 
-                const publicIds = Array.isArray(product.images)
-                        ? product.images
-                                  .map((image) => (typeof image === "object" ? image.public_id : null))
-                                  .filter(Boolean)
-                        : [];
+                const normalizedImages = normalizeImages(product.images);
 
-                if (publicIds.length) {
-                        try {
-                                await cloudinary.api.delete_resources(publicIds, {
-                                        type: "upload",
-                                        resource_type: "image",
-                                });
-                        } catch (cloudinaryError) {
-                                console.log("Error deleting images from Cloudinary", cloudinaryError);
-                        }
-                }
+                await deleteImagesFromStorage(normalizedImages);
 
                 await Product.findByIdAndDelete(req.params.id);
 
