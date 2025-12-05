@@ -32,7 +32,7 @@ const Navbar = () => {
                                 <div className='flex flex-wrap items-center justify-between gap-4'>
                                         <Link to='/' className='flex items-center gap-3 text-payzone-navy'>
                                                 <img
-                                                        src='/logo.svg'
+                                                        src='/logo.png'
                                                         alt='شعار زهراء'
                                                         className='h-12 w-12 rounded-2xl border border-payzone-gold/30 bg-payzone-white shadow-lg shadow-payzone-gold/30'
                                                 />
