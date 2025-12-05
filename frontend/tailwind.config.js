@@ -4,10 +4,10 @@ export default {
         theme: {
                 extend: {
                         colors: {
-                                "payzone-navy": "#0E2748",
-                                "payzone-white": "#FFFFFF",
-                                "payzone-gold": "#D29C4A",
-                                "payzone-indigo": "#4B4ACF",
+                                "payzone-navy": "#0f241d",
+                                "payzone-white": "#f7f5ef",
+                                "payzone-gold": "#c8b48a",
+                                "payzone-indigo": "#7aa89f",
                         },
                 },
         },

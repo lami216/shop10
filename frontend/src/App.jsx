@@ -46,7 +46,8 @@ function App() {
         }
 
         return (
-                <div className='relative min-h-screen bg-payzone-navy text-payzone-white'>
+                <div className='relative min-h-screen bg-gradient-to-b from-[#f6f3ec] via-[#eef6f0] to-[#e3efe6] text-payzone-navy'>
+                        <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(122,168,159,0.14),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(200,180,138,0.18),transparent_30%),radial-gradient(circle_at_50%_75%,rgba(15,36,29,0.12),transparent_35%)]' />
                         <div className='relative z-50 pt-20'>
                                 <Navbar />
                                 <Routes>
