@@ -20,22 +20,25 @@ const productSchema = new mongoose.Schema(
                         required: [true, "Image is required"],
                 },
                 images: {
-                        type: [
-                                {
-                                        url: {
-                                                type: String,
-                                                required: true,
-                                        },
-                                        public_id: {
-                                                type: String,
-                                                required: true,
-                                        },
-                                },
-                        ],
+                        type: [mongoose.Schema.Types.Mixed],
                         default: [],
                         validate: {
                                 validator(images) {
-                                        return images.length <= 3;
+                                        if (!Array.isArray(images) || images.length > 3) {
+                                                return false;
+                                        }
+
+                                        return images.every((image) => {
+                                                if (typeof image === "string") {
+                                                        return image.trim().length > 0;
+                                                }
+
+                                                if (typeof image === "object" && image !== null) {
+                                                        return typeof image.url === "string" && image.url.trim().length > 0;
+                                                }
+
+                                                return false;
+                                        });
                                 },
                                 message: "A product can have up to 3 images only",
                         },
