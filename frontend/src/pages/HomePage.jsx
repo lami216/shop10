@@ -20,19 +20,24 @@ const HomePage = () => {
         }, [fetchCategories]);
 
         return (
-                <div className='relative min-h-screen overflow-hidden text-payzone-white'>
+                <div className='relative min-h-screen overflow-hidden text-payzone-navy'>
+                        <div className='absolute inset-0 bg-[radial-gradient(circle_at_15%_30%,rgba(122,168,159,0.18),transparent_35%),radial-gradient(circle_at_85%_20%,rgba(200,180,138,0.25),transparent_32%)]' />
                         <div className='relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8'>
-                                <h1 className='mb-4 text-center text-5xl font-bold sm:text-6xl'>
-                                        <span className='block text-white'>{t("home.titleLine1")}</span>
-                                        <span className='bg-gradient-to-r from-payzone-gold via-payzone-gold/80 to-payzone-indigo bg-clip-text text-transparent'>
-                                                {t("home.titleHighlight")}
+                                <div className='mb-8 flex flex-col items-center gap-4 text-center'>
+                                        <span className='inline-flex items-center gap-2 rounded-full border border-payzone-indigo/40 bg-payzone-white/80 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-payzone-indigo shadow-sm'>
+                                                {t("home.titleLine1")}
                                         </span>
-                                </h1>
-                                <p className='mb-12 text-center text-lg text-white/70'>
-                                        {t("home.subtitle")}
-                                </p>
+                                        <h1 className='text-4xl font-bold leading-tight text-payzone-navy sm:text-6xl'>
+                                                <span className='bg-gradient-to-r from-payzone-navy via-payzone-indigo to-payzone-gold bg-clip-text text-transparent'>
+                                                        {t("home.titleHighlight")}
+                                                </span>
+                                        </h1>
+                                        <p className='max-w-3xl text-lg text-payzone-navy/70'>{t("home.subtitle")}</p>
+                                </div>
 
-                                <SearchBar />
+                                <div className='rounded-3xl border border-payzone-indigo/20 bg-payzone-white/80 p-4 shadow-lg shadow-payzone-navy/5 backdrop-blur-sm'>
+                                        <SearchBar />
+                                </div>
 
                                 <div className='grid grid-cols-2 gap-4 lg:grid-cols-3'>
                                         {categories.length === 0 && !categoriesLoading && (
