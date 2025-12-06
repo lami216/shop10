@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -26,10 +26,33 @@ function App() {
         const checkingAuth = useUserStore((state) => state.checkingAuth);
         const initializeCart = useCartStore((state) => state.initializeCart);
         const getCartItems = useCartStore((state) => state.getCartItems);
+        const location = useLocation();
 
         useEffect(() => {
                 checkAuth();
         }, [checkAuth]);
+
+        useEffect(() => {
+                const body = document.body;
+                const pageClass =
+                        location.pathname === "/"
+                                ? "home"
+                                : location.pathname.startsWith("/login")
+                                        ? "login"
+                                        : location.pathname.startsWith("/signup")
+                                                ? "signup"
+                                                : "";
+
+                body.classList.remove("home", "login", "signup");
+
+                if (pageClass) {
+                        body.classList.add(pageClass);
+                }
+
+                return () => {
+                        body.classList.remove("home", "login", "signup");
+                };
+        }, [location.pathname]);
 
         useEffect(() => {
                 initializeCart();

@@ -62,3 +62,48 @@
         outline: 2px solid #fbbf24;
         outline-offset: 2px;
 }
+
+/* Page-specific header and content spacing */
+body.home header,
+body.login header,
+body.signup header {
+        padding-top: 1.5rem;
+        padding-bottom: 1.25rem;
+}
+
+body.home .page-content,
+body.login .page-content,
+body.signup .page-content {
+        margin-top: 7.5rem;
+}
+
+/* Dashboard text color adjustments */
+.dashboard-container,
+.dashboard-container h1,
+.dashboard-container h2,
+.dashboard-container h3,
+.dashboard-container h4,
+.dashboard-container h5,
+.dashboard-container h6,
+.dashboard-container p,
+.dashboard-container span,
+.dashboard-container label,
+.dashboard-container th,
+.dashboard-container td,
+.dashboard-container li,
+.dashboard-container .text-white,
+.dashboard-container .text-white\/70 {
+        color: #000 !important;
+}
+
+.dashboard-container input,
+.dashboard-container textarea,
+.dashboard-container select {
+        color: #000 !important;
+}
+
+.dashboard-container input::placeholder,
+.dashboard-container textarea::placeholder,
+.dashboard-container select::placeholder {
+        color: #000 !important;
+}

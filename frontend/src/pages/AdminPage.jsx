@@ -33,7 +33,7 @@ const AdminPage = () => {
         );
 
         return (
-                <div className='relative min-h-screen overflow-hidden'>
+                <div className='dashboard-container relative min-h-screen overflow-hidden'>
                         <div className='container relative z-10 mx-auto px-4 py-16'>
                                 <motion.h1
                                         className='mb-8 text-center text-4xl font-bold text-payzone-gold'
