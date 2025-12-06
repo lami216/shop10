@@ -20,7 +20,7 @@ const HomePage = () => {
         }, [fetchCategories]);
 
         return (
-                <div className='relative min-h-screen overflow-hidden text-payzone-navy'>
+                <div className='page-content relative min-h-screen overflow-hidden text-payzone-navy'>
                         <div className='absolute inset-0 bg-[radial-gradient(circle_at_15%_30%,rgba(122,168,159,0.18),transparent_35%),radial-gradient(circle_at_85%_20%,rgba(200,180,138,0.25),transparent_32%)]' />
                         <div className='relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8'>
                                 <div className='mb-8 flex flex-col items-center gap-4 text-center'>
