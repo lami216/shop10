@@ -41,7 +41,7 @@ const HomePage = () => {
 
                                 <div className='grid grid-cols-2 gap-4 lg:grid-cols-3'>
                                         {categories.length === 0 && !categoriesLoading && (
-                                                <div className='col-span-full text-center text-white/70'>
+                                                <div className='col-span-full text-center text-black'>
                                                         {t("categories.manager.list.empty")}
                                                 </div>
                                         )}

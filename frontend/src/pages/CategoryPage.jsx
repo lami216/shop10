@@ -100,7 +100,7 @@ const CategoryPage = () => {
                                 )}
 
                                 {showSearchEmptyState && (
-                                        <div className='mb-6 rounded-3xl border border-white/10 bg-payzone-navy p-6 text-center text-lg text-payzone-white/70'>
+                                        <div className='mb-6 rounded-3xl border border-white/10 bg-payzone-navy p-6 text-center text-lg text-black'>
                                                 {t("search.noResults", { query: searchQuery.trim() })}
                                         </div>
                                 )}
@@ -112,7 +112,7 @@ const CategoryPage = () => {
                                         transition={{ duration: 0.8, delay: 0.2 }}
                                 >
                                         {!isFilteringCurrentCategory && displayedProducts?.length === 0 && (
-                                                <h2 className='col-span-full text-center text-3xl font-semibold text-white/70'>
+                                                <h2 className='col-span-full text-center text-3xl font-semibold text-black'>
                                                         {t("categoryPage.noProducts")}
                                                 </h2>
                                         )}

@@ -91,12 +91,8 @@ body.signup .page-content {
 .dashboard-container th,
 .dashboard-container td,
 .dashboard-container li,
-.dashboard-container .text-white,
-.dashboard-container .text-white\/70,
-.dashboard-container .text-white\/80,
-.dashboard-container .text-white\/60,
-.dashboard-container [class*="text-white"],
-.dashboard-container [class*="text-payzone-white"] {
+.dashboard-container .text-black,
+.dashboard-container [class*="text-black"] {
         color: #000 !important;
 }
 
