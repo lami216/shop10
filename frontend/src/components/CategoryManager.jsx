@@ -3,6 +3,7 @@ import { ImagePlus, Trash2, Edit3, X, Save } from "lucide-react";
 import toast from "react-hot-toast";
 import useTranslation from "../hooks/useTranslation";
 import { useCategoryStore } from "../stores/useCategoryStore";
+import { compressImageFile } from "../lib/compressImageFile";
 
 const CategoryManager = () => {
         const {
@@ -50,22 +51,23 @@ const CategoryManager = () => {
                 });
         }, [selectedCategory, createEmptyForm]);
 
-        const handleImageChange = (event) => {
+        const handleImageChange = async (event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
 
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                        const result = typeof reader.result === "string" ? reader.result : "";
+                try {
+                        const { dataUrl } = await compressImageFile(file);
                         setFormState((previous) => ({
                                 ...previous,
-                                image: result,
-                                imagePreview: result,
+                                image: dataUrl,
+                                imagePreview: dataUrl,
                                 imageChanged: true,
                         }));
-                };
-                reader.readAsDataURL(file);
-                event.target.value = "";
+                } catch (error) {
+                        toast.error(error?.message || t("categories.manager.form.imageError"));
+                } finally {
+                        event.target.value = "";
+                }
         };
 
         const resetForm = () => {

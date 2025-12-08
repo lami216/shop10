@@ -6,6 +6,7 @@ import useTranslation from "../hooks/useTranslation";
 import { useProductStore } from "../stores/useProductStore";
 import { useCategoryStore } from "../stores/useCategoryStore";
 import { formatMRU } from "../lib/formatMRU";
+import { compressImageFile } from "../lib/compressImageFile";
 
 const MAX_IMAGES = 3;
 
@@ -21,14 +22,6 @@ const createInitialFormState = () => ({
         coverSource: "existing",
         coverIndex: 0,
 });
-
-const readFileAsDataURL = (file) =>
-        new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-        });
 
 const validateProductFormFields = (state, totalImages, t) => {
         const trimmedName = state.name.trim();
@@ -152,32 +145,38 @@ const CreateProductForm = () => {
                 const files = Array.from(event.target.files || []);
                 if (!files.length) return;
 
+                const compressedImages = [];
+                const remainingSlots =
+                        MAX_IMAGES - (formState.existingImages.length + formState.newImages.length);
+
+                if (remainingSlots <= 0) {
+                        toast.error(t("admin.createProduct.messages.imagesLimit", { count: MAX_IMAGES }));
+                        event.target.value = "";
+                        return;
+                }
+
+                const acceptedFiles = files.slice(0, remainingSlots);
+
+                if (files.length > remainingSlots) {
+                        toast.error(t("admin.createProduct.messages.imagesRemaining", { count: remainingSlots }));
+                }
+
                 try {
-                        const base64Images = await Promise.all(files.map(readFileAsDataURL));
+                        for (const file of acceptedFiles) {
+                                try {
+                                        const { dataUrl } = await compressImageFile(file);
+                                        compressedImages.push(dataUrl);
+                                } catch (error) {
+                                        toast.error(error?.message || t("admin.createProduct.messages.imagesUploadError"));
+                                }
+                        }
+
+                        if (!compressedImages.length) {
+                                return;
+                        }
+
                         setFormState((previous) => {
-                                const remainingSlots =
-                                        MAX_IMAGES - (previous.existingImages.length + previous.newImages.length);
-
-                                if (remainingSlots <= 0) {
-                                        toast.error(
-                                                t("admin.createProduct.messages.imagesLimit", { count: MAX_IMAGES })
-                                        );
-                                        return previous;
-                                }
-
-                                const acceptedImages = base64Images.slice(0, remainingSlots);
-
-                                if (base64Images.length > remainingSlots) {
-                                        toast.error(
-                                                t("admin.createProduct.messages.imagesRemaining", { count: remainingSlots })
-                                        );
-                                }
-
-                                if (!acceptedImages.length) {
-                                        return previous;
-                                }
-
-                                const nextNewImages = [...previous.newImages, ...acceptedImages];
+                                const nextNewImages = [...previous.newImages, ...compressedImages];
                                 let coverSource = previous.coverSource;
                                 let coverIndex = previous.coverIndex;
 

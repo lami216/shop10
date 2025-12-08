@@ -39,11 +39,11 @@ const ProductCard = ({ product }) => {
                                 className='relative aspect-[4/5] w-full overflow-hidden min-h-[14rem] sm:min-h-0 sm:aspect-square'
                                 aria-label={t("product.viewDetails", { name: product.name })}
                         >
-                                {isDiscounted && (
-                                        <span className='absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white shadow-lg'>
-                                                -{discountPercentage}%
-                                        </span>
-                                )}
+                        {isDiscounted && (
+                                <span className='absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white shadow-lg'>
+                                        -{discountPercentage}%
+                                </span>
+                        )}
                                 {coverImage ? (
                                         <img
                                                 className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-110'
@@ -55,7 +55,6 @@ const ProductCard = ({ product }) => {
                                                 {t("common.status.noImage")}
                                         </div>
                                 )}
-                                <div className='pointer-events-none absolute inset-0 z-0 bg-gradient-to-t from-payzone-navy/60 via-payzone-navy/20 to-transparent' />
                         </Link>
 
                         <div className='mt-4 flex flex-1 flex-col px-5 pb-5'>
