@@ -78,7 +78,7 @@ const FeaturedProducts = ({ featuredProducts }) => {
                                                                                 <div className='group flex h-full flex-col overflow-hidden rounded-xl border border-payzone-indigo/30 bg-white/5 shadow-lg backdrop-blur-sm transition-all duration-300 hover:border-payzone-gold/60 hover:shadow-xl'>
                                                                                         <div className='relative overflow-hidden'>
                                                                                                 {isDiscounted && (
-                                                                                                        <span className='absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white shadow-lg'>
+                                                                                                        <span className='absolute right-3 top-3 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-black shadow-lg'>
                                                                                                                 -{discountPercentage}%
                                                                                                         </span>
                                                                                                 )}
@@ -89,11 +89,11 @@ const FeaturedProducts = ({ featuredProducts }) => {
                                                                                                 />
                                                                                         </div>
                                                                                         <div className='p-4'>
-                                                                                                <h3 className='mb-2 text-lg font-semibold text-white'>{product.name}</h3>
+                                                                                                <h3 className='mb-2 text-lg font-semibold text-black'>{product.name}</h3>
                                                                                                 <div className='mb-4 flex flex-wrap items-baseline gap-2'>
                                                                                                         {isDiscounted ? (
                                                                                                                 <>
-                                                                                                                        <span className='max-w-full break-words text-sm text-white/60 line-through'>
+                                                                                                                        <span className='max-w-full break-words text-sm text-black line-through'>
                                                                                                                                 {formatMRU(price)}
                                                                                                                         </span>
                                                                                                                         <span className='max-w-full break-words text-lg font-bold text-red-300'>
@@ -125,8 +125,8 @@ const FeaturedProducts = ({ featuredProducts }) => {
                                                 disabled={isStartDisabled}
                                                 className={`absolute top-1/2 -right-4 flex -translate-y-1/2 transform items-center justify-center rounded-full p-2 transition-colors duration-300 ${
                                                         isStartDisabled
-                                                                ? "cursor-not-allowed bg-white/10 text-white/40"
-                                                                : "bg-payzone-indigo text-white hover:bg-[#3b3ad6]"
+                                                                ? "cursor-not-allowed bg-white/10 text-black"
+                                                                : "bg-payzone-indigo text-black hover:bg-[#3b3ad6]"
                                                 }`}
                                         >
                                                 <ChevronRight className='h-6 w-6' />
@@ -137,8 +137,8 @@ const FeaturedProducts = ({ featuredProducts }) => {
                                                 disabled={isEndDisabled}
                                                 className={`absolute top-1/2 -left-4 flex -translate-y-1/2 transform items-center justify-center rounded-full p-2 transition-colors duration-300 ${
                                                         isEndDisabled
-                                                                ? "cursor-not-allowed bg-white/10 text-white/40"
-                                                                : "bg-payzone-indigo text-white hover:bg-[#3b3ad6]"
+                                                                ? "cursor-not-allowed bg-white/10 text-black"
+                                                                : "bg-payzone-indigo text-black hover:bg-[#3b3ad6]"
                                                 }`}
                                         >
                                                 <ChevronLeft className='h-6 w-6' />

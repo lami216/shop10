@@ -131,12 +131,12 @@ const CategoryManager = () => {
                                 <div className='mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                                         <div>
                                                 <h2 className='text-2xl font-semibold text-payzone-gold'>{t("categories.manager.title")}</h2>
-                                                <p className='text-sm text-white/70'>{t("categories.manager.description")}</p>
+                                                <p className='text-sm text-black'>{t("categories.manager.description")}</p>
                                         </div>
                                         {selectedCategory && (
                                                 <button
                                                         type='button'
-                                                        className='inline-flex items-center gap-2 rounded-md border border-payzone-indigo/40 px-3 py-1 text-sm text-white transition hover:border-payzone-gold'
+                                                        className='inline-flex items-center gap-2 rounded-md border border-payzone-indigo/40 px-3 py-1 text-sm text-black transition hover:border-payzone-gold'
                                                         onClick={handleCancelEdit}
                                                 >
                                                         <X className='h-4 w-4' />
@@ -148,13 +148,13 @@ const CategoryManager = () => {
                                 <form onSubmit={handleSubmit} className='space-y-6'>
                                         <div className='grid gap-4 sm:grid-cols-2'>
                                                 <div>
-                                                        <label className='block text-sm font-medium text-white/80' htmlFor='category-name'>
+                                                        <label className='block text-sm font-medium text-black' htmlFor='category-name'>
                                                                 {t("categories.manager.form.name")}
                                                         </label>
                                                         <input
                                                                 id='category-name'
                                                                 type='text'
-                                                                className='mt-1 block w-full rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-white focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo'
+                                                                className='mt-1 block w-full rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-black focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo'
                                                                 value={formState.name}
                                                                 onChange={(event) => setFormState((previous) => ({
                                                                         ...previous,
@@ -164,7 +164,7 @@ const CategoryManager = () => {
                                                         />
                                                 </div>
                                                 <div>
-                                                        <label className='block text-sm font-medium text-white/80'>
+                                                        <label className='block text-sm font-medium text-black'>
                                                                 {t("categories.manager.form.image")}
                                                         </label>
                                                         <div className='mt-1 flex items-center gap-3'>
@@ -177,7 +177,7 @@ const CategoryManager = () => {
                                                                 />
                                                                 <label
                                                                         htmlFor='category-image'
-                                                                        className='inline-flex cursor-pointer items-center gap-2 rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-sm text-white transition hover:border-payzone-gold hover:bg-payzone-navy/80'
+                                                                        className='inline-flex cursor-pointer items-center gap-2 rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-sm text-black transition hover:border-payzone-gold hover:bg-payzone-navy/80'
                                                                 >
                                                                         <ImagePlus className='h-4 w-4' />
                                                                         {formState.imagePreview
@@ -192,18 +192,18 @@ const CategoryManager = () => {
                                                                         />
                                                                 )}
                                                         </div>
-                                                        <p className='mt-2 text-xs text-white/60'>{t("categories.manager.form.imageHint")}</p>
+                                                        <p className='mt-2 text-xs text-black'>{t("categories.manager.form.imageHint")}</p>
                                                 </div>
                                         </div>
 
                                         <div>
-                                                <label className='block text-sm font-medium text-white/80' htmlFor='category-description'>
+                                                <label className='block text-sm font-medium text-black' htmlFor='category-description'>
                                                         {t("categories.manager.form.description")}
                                                 </label>
                                                 <textarea
                                                         id='category-description'
                                                         rows={3}
-                                                        className='mt-1 block w-full rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-white focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo'
+                                                        className='mt-1 block w-full rounded-md border border-payzone-indigo/40 bg-payzone-navy/60 px-3 py-2 text-black focus:border-payzone-gold focus:outline-none focus:ring-2 focus:ring-payzone-indigo'
                                                         value={formState.description}
                                                         onChange={(event) => setFormState((previous) => ({
                                                                 ...previous,
@@ -228,7 +228,7 @@ const CategoryManager = () => {
                         <div className='rounded-xl border border-payzone-indigo/40 bg-white/5 p-6 shadow-lg backdrop-blur-sm'>
                                 <h3 className='mb-4 text-xl font-semibold text-payzone-gold'>{t("categories.manager.list.title")}</h3>
                                 {categories.length === 0 ? (
-                                        <p className='text-sm text-white/70'>{t("categories.manager.list.empty")}</p>
+                                        <p className='text-sm text-black'>{t("categories.manager.list.empty")}</p>
                                 ) : (
                                         <ul className='space-y-4'>
                                                 {categories.map((category) => (
@@ -243,16 +243,16 @@ const CategoryManager = () => {
                                                                                 className='h-14 w-14 rounded-lg object-cover'
                                                                         />
                                                                         <div>
-                                                                                <p className='text-lg font-semibold text-white'>{category.name}</p>
+                                                                                <p className='text-lg font-semibold text-black'>{category.name}</p>
                                                                                 {category.description && (
-                                                                                        <p className='text-sm text-white/60'>{category.description}</p>
+                                                                                        <p className='text-sm text-black'>{category.description}</p>
                                                                                 )}
                                                                         </div>
                                                                 </div>
                                                                 <div className='flex items-center gap-2'>
                                                                         <button
                                                                                 type='button'
-                                                                                className='inline-flex items-center gap-1 rounded-md bg-white/10 px-3 py-1 text-sm text-white transition hover:bg-white/20'
+                                                                                className='inline-flex items-center gap-1 rounded-md bg-white/10 px-3 py-1 text-sm text-black transition hover:bg-white/20'
                                                                                 onClick={() => handleEdit(category)}
                                                                         >
                                                                                 <Edit3 className='h-4 w-4' />
