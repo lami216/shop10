@@ -87,6 +87,12 @@ const handleImageUpload = async (imageContent) => {
                 if (uploadError.message === "INVALID_IMAGE_FORMAT") {
                         throw createHttpError(400, "Invalid category image format");
                 }
+                if (uploadError.message === "IMAGE_TOO_LARGE") {
+                        throw createHttpError(
+                                400,
+                                "Category image must be 10MB or less after compression"
+                        );
+                }
                 throw createHttpError(500, "Failed to process category image");
         }
 };
