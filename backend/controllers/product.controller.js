@@ -196,6 +196,12 @@ const uploadProductImages = async (images) => {
                 return uploadedImages;
         } catch (uploadError) {
                 await cleanupUploadedImages(uploadedImages);
+                if (uploadError.message === "IMAGE_TOO_LARGE") {
+                        throw createHttpError(
+                                400,
+                                "Each product image must be 10MB or less after compression"
+                        );
+                }
                 throw uploadError;
         }
 };
@@ -282,6 +288,12 @@ const uploadNewProductImages = async (newImages) => {
                 return uploadedImages;
         } catch (uploadError) {
                 await cleanupUploadedImages(uploadedImages);
+                if (uploadError.message === "IMAGE_TOO_LARGE") {
+                        throw createHttpError(
+                                400,
+                                "Each product image must be 10MB or less after compression"
+                        );
+                }
                 throw uploadError;
         }
 };
